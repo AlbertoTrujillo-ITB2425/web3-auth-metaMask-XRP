@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Wallet Connection - Send XRP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xrpl@1.0.0/dist/xrpl.min.js"></script>
+    <script defer src="js/app.js"></script>
+    <script defer src="js/styles.js"></script>
+    <style>
+        /* Botones interactivos */
+        .btn-custom {
+            background-color: #00C0B5;
+            color: #fff;
+            font-size: 1.2rem;
+            padding: 12px 30px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #008C8A;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-custom:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efecto de dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #1e1e1e;
+            min-width: 220px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 10px 0;
+            z-index: 100;
+            transition: opacity 0.3s ease;
+        }
+
+        .dropdown-content a {
+            color: #BDC3C7;
+            padding: 14px 20px;
+            text-decoration: none;
+            display: block;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #00C0B5;
+            color: #121212;
+        }
+
+        .show {
+            display: block;
+        }
+
+        /* Modal de confirmación */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-close {
+            font-size: 1.5rem;
+            color: #fff;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .status-box {
+            background-color: #333;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 1rem;
+            border-radius: 10px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Fondo oscuro degradado */
+        body {
+            background: linear-gradient(135deg, rgba(0, 34, 51, 1) 0%, rgba(3, 31, 48, 1) 100%);
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="flex flex-col items-center min-h-screen">
+
+    <div class="main-content w-full max-w-4xl p-8 bg-gray-800 bg-opacity-80 rounded-lg shadow-xl mt-10">
+        <!-- Wallet Connection Section -->
+        <section id="wallet-info" class="wallet-info mb-10">
+            <h2 class="text-3xl text-teal-400 font-semibold text-center mb-4">Step 1: Connect Your Wallet</h2>
+            <p class="text-lg text-gray-300 text-center mb-6">Select a wallet to begin your journey in the Web3 ecosystem. You will be able to view your XRP balance and send XRP securely.</p>
+            <button id="walletDropdown" class="btn-custom w-full mb-4">Connect Wallet</button>
+
+            <div id="walletOptions" class="dropdown-content">
+                <a href="https://metamask.io/download/" target="_blank">MetaMask</a>
+                <a href="https://www.coinbase.com/wallet" target="_blank">Coinbase Wallet</a>
+                <a href="https://www.binance.org/en/smartChain" target="_blank">Binance Wallet</a>
+            </div>
+
+            <div id="account" class="status-box text-center">Account: Not connected</div>
+            <div id="network" class="status-box text-center">Network: Unknown</div>
+        </section>
+
+        <!-- XRP Information Section -->
+        <section id="xrp-section" class="crypto-section mt-10">
+            <h2 class="text-3xl text-teal-400 font-semibold text-center mb-6">Step 2: XRP Information</h2>
+            <p class="text-lg text-gray-300 text-center mb-6">Enter your XRP address below to check your balance or send XRP to others.</p>
+
+            <div class="mt-6">
+                <input type="text" id="xrp-address" placeholder="Enter XRP address..." class="w-full mt-4 p-3 rounded-lg bg-gray-700 text-white border-2 border-gray-600">
+                <button id="checkXrpBalance" class="btn-custom w-full mt-4">Check XRP Balance</button>
+                <div id="xrp-balance" class="status-box text-center mt-4">Balance: 0 XRP</div>
+
+                <h3 class="text-2xl text-teal-400 font-semibold text-center mt-6">Step 3: Send XRP</h3>
+                <input type="text" id="xrp-toAddress" placeholder="Enter recipient address..." class="w-full mt-4 p-3 rounded-lg bg-gray-700 text-white border-2 border-gray-600">
+                <input type="number" id="xrp-amount" placeholder="Enter amount of XRP..." class="w-full mt-4 p-3 rounded-lg bg-gray-700 text-white border-2 border-gray-600">
+                <button id="nextStepButton" class="btn-custom w-full mt-4">Next: Review & Confirm</button>
+            </div>
+
+            <div id="send-status" class="status-box text-center mt-6">Transaction Status: Not Started</div>
+        </section>
+
+        <!-- Step 3: Confirm Transaction Section -->
+        <section id="confirm-section" class="confirm-section mt-10 hidden">
+            <h2 class="text-3xl text-teal-400 font-semibold text-center mb-6">Step 3: Confirm Transaction</h2>
+            <p class="text-lg text-gray-300 text-center mb-6">Review the details of your XRP transaction before confirming.</p>
+
+            <div class="mt-6">
+                <div id="confirm-address" class="status-box text-center">Recipient Address: Not Provided</div>
+                <div id="confirm-amount" class="status-box text-center mt-4">Amount: 0 XRP</div>
+                <div id="confirm-fee" class="status-box text-center mt-4">Transaction Fee: Calculating...</div>
+                
+                <div class="flex justify-center mt-6">
+                    <button id="confirmButton" class="btn-custom w-1/3">Confirm</button>
+                    <button id="cancelButton" class="btn-custom w-1/3 ml-4">Cancel</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transaction History Section -->
+        <section id="history-section" class="history-section mt-10">
+            <h2 class="text-3xl text-teal-400 font-semibold text-center mb-6">Transaction History</h2>
+            <p class="text-lg text-gray-300 text-center mb-6">Keep track of your XRP transactions. Below is a list of all transactions you have made recently.</p>
+            <div id="transaction-list" class="status-box text-center mt-6">No transactions yet.</div>
+            <button id="viewHistoryButton" class="btn-custom w-full mt-6">View All Transactions</button>
+        </section>
+
+        <!-- Help Section -->
+        <section id="help-section" class="help-section mt-10">
+            <h2 class="text-3xl text-teal-400 font-semibold text-center mb-6">Need Help?</h2>
+            <p class="text-lg text-gray-300 text-center mb-6">If you're new to Web3 or XRP, don't worry! Here's some useful information:</p>
+            <ul class="text-lg text-gray-300 mt-4 space-y-2">
+                <li><strong>What is Web3?</strong> Web3 is the decentralized internet that allows users to control their own data and interact directly with applications through blockchain technologies.</li>
+                <li><strong>What is XRP?</strong> XRP is a cryptocurrency that is fast, scalable, and used primarily for cross-border payments.</li>
+                <li><strong>How do I connect my wallet?</strong> Click on "Connect Wallet" and select one of the supported wallets such as MetaMask, Coinbase, or Binance.</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="w-full bg-gray-900 bg-opacity-80 py-6 mt-10">
+            <p class="text-center text-gray-400 text-sm">Developed by Alberto Trujillo. Powered by XRP, MetaMask, Coinbase, and Binance Wallets.</p>
+            <p class="text-center text-gray-400 text-sm mt-2">
+                <a href="https://www.xrpl.org/" target="_blank">Learn more about XRP</a> | 
+                <a href="https://metamask.io/" target="_blank">MetaMask</a> | 
+                <a href="https://www.coinbase.com/" target="_blank">Coinbase Wallet</a> | 
+                <a href="https://www.binance.org/" target="_blank">Binance Wallet</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Modal for Errors or Confirmation -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="modal-close" class="modal-close">&times;</span>
+            <p id="modal-text">Transaction successful!</p>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar el dropdown al hacer clic en el botón
+        const walletDropdown = document.getElementById('walletDropdown');
+        const walletOptions = document.getElementById('walletOptions');
+        walletDropdown.addEventListener('click', () => {
+            walletOptions.classList.toggle('show');
+        });
+
+        // Cerrar el modal
+        const modalClose = document.getElementById('modal-close');
+        const modal = document.getElementById('modal');
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Muestra la sección de confirmación después de ingresar la cantidad y la dirección
+        const sendXrpButton = document.getElementById('sendXrpButton');
+        const confirmSection = document.getElementById('confirm-section');
+        const confirmAddress = document.getElementById('confirm-address');
+        const confirmAmount = document.getElementById('confirm-amount');
+
+        sendXrpButton.addEventListener('click', () => {
+            const toAddress = document.getElementById('xrp-toAddress').value;
+            const amount = document.getElementById('xrp-amount').value;
+
+            if (toAddress && amount > 0) {
+                confirmAddress.textContent = `Recipient Address: ${toAddress}`;
+                confirmAmount.textContent = `Amount: ${amount} XRP`;
+                confirmSection.classList.remove('hidden');
+            } else {
+                alert('Please enter a valid address and amount.');
+            }
+        });
+
+        // Botón de confirmación
+        const confirmButton = document.getElementById('confirmButton');
+        confirmButton.addEventListener('click', () => {
+            // Aquí puede llamar a una función para enviar la transacción
+            document.getElementById('modal-text').textContent = "Transaction Confirmed!";
+            modal.style.display = 'flex';
+        });
+
+        // Botón de cancelación
+        const cancelButton = document.getElementById('cancelButton');
+        cancelButton.addEventListener('click', () => {
+            confirmSection.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>
