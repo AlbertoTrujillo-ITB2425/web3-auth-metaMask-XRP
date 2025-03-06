@@ -4,15 +4,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web3 Wallet Connection - Send XRP</title>
+    <meta name="description" content="Send XRP securely and efficiently through a decentralized platform. Connect your wallet and make fast, low-fee transactions.">
+    <meta name="author" content="Alberto Trujillo">
+    <meta name="keywords" content="XRP, cryptocurrency, web3, secure transactions, decentralized finance, wallet connection, send XRP, fast transactions, low-fee crypto">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#00C0B5">
+    
+    <title>Web3 Wallet Connection - Send XRP Securely</title>
+
+    <!-- Open Graph Meta Tags for Social Media Sharing -->
+    <meta property="og:title" content="Web3 Wallet Connection - Send XRP Securely">
+    <meta property="og:description" content="Send XRP securely and efficiently through a decentralized platform. Connect your wallet and make fast, low-fee transactions.">
+    <meta property="og:image" content="path/to/image.jpg">
+    <meta property="og:url" content="https://www.yourwebsite.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:title" content="Web3 Wallet Connection - Send XRP Securely">
+    <meta name="twitter:description" content="Send XRP securely and efficiently through a decentralized platform. Connect your wallet and make fast, low-fee transactions.">
+    <meta name="twitter:image" content="path/to/image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Web3 and XRP libraries -->
     <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xrpl@1.0.0/dist/xrpl.min.js"></script>
+
+    <!-- Custom JavaScript for functionality -->
     <script defer src="js/app.js"></script>
     <script defer src="js/styles.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Web Font (Roboto) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Additional Styles for Security and UX -->
     <style>
-        /* Botones interactivos */
+        /* Security Banner */
+        .banner {
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .banner-info {
+            background-color: #28a745;
+        }
+
+        .banner-warning {
+            background-color: #ffcc00;
+        }
+
+        /* Primary button styles for action-oriented experience */
         .btn-custom {
             background-color: #00C0B5;
             color: #fff;
@@ -35,88 +85,9 @@
             transform: translateY(0);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-
-        /* Efecto de dropdown */
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #1e1e1e;
-            min-width: 220px;
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            padding: 10px 0;
-            z-index: 100;
-            transition: opacity 0.3s ease;
-        }
-
-        .dropdown-content a {
-            color: #BDC3C7;
-            padding: 14px 20px;
-            text-decoration: none;
-            display: block;
-            font-size: 1.1rem;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            border-radius: 8px;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #00C0B5;
-            color: #121212;
-        }
-
-        .show {
-            display: block;
-        }
-
-        /* Modal de confirmación */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
-
-        .modal-content {
-            background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-close {
-            font-size: 1.5rem;
-            color: #fff;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-        }
-
-        .status-box {
-            background-color: #333;
-            padding: 15px;
-            margin-top: 10px;
-            font-size: 1rem;
-            border-radius: 10px;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Fondo oscuro degradado */
-        body {
-            background: linear-gradient(135deg, rgba(0, 34, 51, 1) 0%, rgba(3, 31, 48, 1) 100%);
-            font-family: 'Roboto', sans-serif;
-        }
     </style>
 </head>
+
 
 <body class="flex flex-col items-center min-h-screen">
 
